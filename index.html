@@ -1,821 +1,386 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบสำรวจคะแนนนิยมการเลือกตั้ง</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Link Hub — รวมลิงก์ที่ใช้บ่อย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Thai',-apple-system,BlinkMacSystemFont,sans-serif;background:#0B0F1A;color:#E2E8F0;min-height:100vh;-webkit-user-select:none;-moz-user-select:none;user-select:none}
+a{text-decoration:none;color:inherit}
+input,select,button,textarea{font-family:inherit;-webkit-user-select:text;user-select:text}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
 
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.1)}}
+@keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,40px) scale(1.15)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
+.orb1{position:fixed;top:-120px;right:-120px;width:400px;height:400px;background:radial-gradient(circle,rgba(59,130,246,.12) 0%,transparent 70%);border-radius:50%;pointer-events:none;animation:float1 20s ease-in-out infinite}
+.orb2{position:fixed;bottom:-100px;left:-100px;width:350px;height:350px;background:radial-gradient(circle,rgba(139,92,246,.10) 0%,transparent 70%);border-radius:50%;pointer-events:none;animation:float2 25s ease-in-out infinite}
 
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+.container{max-width:900px;margin:0 auto;padding:24px 16px 100px;position:relative;z-index:1}
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 15s ease-in-out infinite;
-        }
+.header{text-align:center;margin-bottom:28px;animation:fadeIn .6s ease-out}
+.clock{font-size:clamp(36px,8vw,48px);font-weight:700;letter-spacing:2px;color:#F8FAFC}
+.date{font-size:14px;color:#64748B;margin-top:2px}
+.greeting{font-size:clamp(18px,5vw,24px);font-weight:600;color:#F1F5F9;margin:12px 0 4px}
+.subtitle{font-size:14px;color:#64748B}
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+.search-wrap{position:relative;max-width:480px;margin:0 auto 20px;animation:fadeIn .6s ease-out .1s both}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+.search-input{width:100%;padding:14px 44px;font-size:15px;background:#111827;border:1px solid #1E293B;border-radius:14px;color:#E2E8F0;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:#3B82F6}
+.search-clear{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:#1E293B;border:none;color:#94A3B8;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:12px;display:none;align-items:center;justify-content:center}
+.search-clear.show{display:flex}
 
-        .header-content {
-            position: relative;
-            z-index: 1;
-        }
+.cat-filter{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:28px;scrollbar-width:none;animation:fadeIn .6s ease-out .15s both}
+.cat-filter::-webkit-scrollbar{display:none}
+.cat-pill{padding:8px 16px;border-radius:20px;border:1px solid #1E293B;background:#111827;color:#94A3B8;font-size:13px;cursor:pointer;white-space:nowrap;transition:all .2s;font-weight:500}
+.cat-pill:hover{border-color:#334155}
+.cat-pill.active{background:rgba(59,130,246,.13);border-color:#3B82F6;color:#3B82F6}
 
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
+.section{margin-bottom:32px;animation:fadeIn .5s ease-out both}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.section-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.section-title{font-size:16px;font-weight:600;color:#CBD5E1;white-space:nowrap}
+.section-line{flex:1;height:1px}
 
-        .header p {
-            font-size: 18px;
-            font-weight: 300;
-            opacity: 0.95;
-        }
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:#111827;border:1px solid #1E293B;border-radius:14px;padding:16px;transition:all .25s ease;box-shadow:0 2px 12px rgba(0,0,0,.2);cursor:pointer;display:block}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(59,130,246,.12);border-color:rgba(59,130,246,.3)}
+.card-inner{display:flex;align-items:center;gap:14px}
+.card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-icon img{width:28px;height:28px;border-radius:4px}
+.card-text{flex:1;min-width:0}
+.card-title{font-size:15px;font-weight:600;color:#F1F5F9;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-desc{font-size:13px;color:#64748B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-arrow{font-size:18px;color:#475569;flex-shrink:0;transition:color .2s}
+.card:hover .card-arrow{color:#3B82F6}
 
-        .form-content {
-            padding: 40px 30px;
-        }
+.empty-section{text-align:center;color:#475569;padding:24px 0;font-size:14px}
+.no-result{text-align:center;color:#475569;padding:60px 20px;font-size:15px}
+.no-result-icon{font-size:48px;margin-bottom:12px}
 
-        .section {
-            margin-bottom: 35px;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
-        }
+.fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#8B5CF6);border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(59,130,246,.3);transition:all .25s ease;z-index:100;display:flex;align-items:center;justify-content:center}
+.fab:hover{transform:scale(1.1);box-shadow:0 8px 30px rgba(59,130,246,.4)}
 
-        .section:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#0F172A;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:85vh;overflow-y:auto;padding:24px 20px 40px;border:1px solid #1E293B;border-bottom:none;animation:slideUp .3s ease-out}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:20px;font-weight:700;color:#F1F5F9}
+.close-btn{background:#1E293B;border:none;color:#94A3B8;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.close-btn:hover{background:#334155}
 
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1e3c72;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-            display: flex;
-            align-items: center;
-        }
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:#111827;border-radius:12px;padding:4px}
+.tab{flex:1;padding:10px 0;border-radius:10px;border:none;background:transparent;color:#94A3B8;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
+.tab.active{background:#1E293B;color:#F1F5F9}
 
-        .section-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            margin-right: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
-        }
+.form-section{margin-bottom:24px}
+.form-label{font-size:15px;font-weight:600;color:#CBD5E1;margin-bottom:12px}
+.input{width:100%;padding:12px 14px;margin-bottom:10px;background:#111827;border:1px solid #1E293B;border-radius:10px;color:#E2E8F0;font-size:14px;outline:none;transition:border-color .2s}
+.input:focus{border-color:#3B82F6}
+.add-btn{width:100%;padding:12px 0;border-radius:10px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);border:none;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.add-btn:hover{opacity:.9}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.cat-label-admin{border-left:3px solid;padding-left:10px;font-size:14px;font-weight:600;color:#CBD5E1;margin-bottom:8px}
+.admin-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111827;border-radius:10px;margin-bottom:6px;border:1px solid #1E293B}
+.admin-link-title{font-size:14px;font-weight:500;color:#E2E8F0}
+.admin-link-url{font-size:12px;color:#64748B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.del-btn{padding:6px 14px;border-radius:8px;border:1px solid #7F1D1D;background:rgba(127,29,29,.2);color:#FCA5A5;font-size:13px;cursor:pointer;flex-shrink:0;font-weight:500;transition:background .2s}
+.del-btn:hover{background:rgba(127,29,29,.4)}
+.empty-text{color:#475569;font-size:13px;padding-left:14px;margin-bottom:8px}
+.flash{padding:10px 16px;border-radius:10px;background:#1E293B;color:#E2E8F0;font-size:14px;text-align:center;margin-bottom:16px;animation:fadeIn .3s ease-out}
 
-        label {
-            display: block;
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
+.login-box{text-align:center;padding:40px 20px}
+.login-box .input{max-width:300px;margin:0 auto 12px;text-align:center}
+.login-title{font-size:32px;margin-bottom:8px}
+.login-subtitle{color:#64748B;font-size:14px;margin-bottom:24px}
+.login-error{color:#FCA5A5;font-size:13px;margin-top:8px}
 
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-family: 'Sarabun', sans-serif;
-            transition: all 0.3s ease;
-            background: white;
-        }
+.color-pick{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.color-pick label{color:#94A3B8;font-size:14px}
+.color-pick input[type=color]{width:48px;height:36px;border:none;border-radius:8px;cursor:pointer;background:transparent}
 
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+/* Block warning overlay */
+.block-warn{position:fixed;inset:0;background:#0B0F1A;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:#64748B;font-size:15px;display:none}
+.block-warn.show{display:flex}
+.block-warn span{font-size:48px}
 
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .radio-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .radio-item:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-            transform: translateX(5px);
-        }
-
-        .radio-item input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .radio-item label {
-            margin: 0;
-            cursor: pointer;
-            flex: 1;
-            font-weight: 400;
-        }
-
-        .candidate-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            margin-right: 10px;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .candidate-name {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .candidate-party {
-            color: #666;
-            font-size: 14px;
-            margin-left: 8px;
-        }
-
-        .submit-section {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 50px;
-            font-size: 18px;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .required {
-            color: #e74c3c;
-            margin-left: 3px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .message {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .form-content {
-                padding: 25px 20px;
-            }
-
-            .section {
-                padding: 20px 15px;
-            }
-
-            .section-title {
-                font-size: 18px;
-            }
-
-            .submit-btn {
-                width: 100%;
-                padding: 15px 30px;
-            }
-        }
-
-        .footer {
-            background: #f8f9fa;
-            padding: 20px;
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            border-top: 1px solid #e0e0e0;
-        }
-    </style>
+@media(max-width:480px){
+  .grid{grid-template-columns:1fr}
+  .container{padding:20px 12px 100px}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-content">
-                <h1>📊 แบบสำรวจความคิดเห็นประชาชน</h1>
-                <p>"เลือกตั้ง 2569"</p>
-            </div>
-        </div>
 
-        <div class="form-content">
-            <div id="message" class="message"></div>
+<div class="orb1"></div>
+<div class="orb2"></div>
+<div class="container" id="app"></div>
+<button class="fab" id="fabBtn" title="จัดการลิงก์">⚙️</button>
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+<div class="block-warn" id="blockWarn">
+  <span>🔒</span>
+  <div>ไม่สามารถใช้งาน Developer Tools ได้</div>
+  <div style="font-size:13px;color:#475569">กรุณาปิด DevTools แล้วรีเฟรชหน้าเว็บ</div>
+</div>
 
-            <form id="surveyForm">
-                <!-- ส่วนที่ 1: ข้อมูลพื้นฐาน -->
-                <div class="section">
-                    <h2 class="section-title">
-                        <span class="section-number">1</span>
-                        ข้อมูลพื้นฐาน
-                    </h2>
-                    
-                    <div class="form-group">
-                        <label>อำเภอ <span class="required">*</span></label>
-                        <select id="district" name="district" required>
-                            <option value="">-- เลือกอำเภอ --</option>
-                            <option value="อำเภอเมืองสุรินทร์">1. อำเภอเมืองสุรินทร์</option>
-                            <option value="อำเภอชุมพลบุรี">2. อำเภอชุมพลบุรี</option>
-                            <option value="อำเภอท่าตูม">3. อำเภอท่าตูม</option>
-                            <option value="อำเภอจอมพระ">4. อำเภอจอมพระ</option>
-                            <option value="อำเภอปราสาท">5. อำเภอปราสาท</option>
-                            <option value="อำเภอกาบเชิง">6. อำเภอกาบเชิง</option>
-                            <option value="อำเภอรัตนบุรี">7. อำเภอรัตนบุรี</option>
-                            <option value="อำเภอสนม">8. อำเภอสนม</option>
-                            <option value="อำเภอศีขรภูมิ">9. อำเภอศีขรภูมิ</option>
-                            <option value="อำเภอสังขะ">10. อำเภอสังขะ</option>
-                            <option value="อำเภอลำดวน">11. อำเภอลำดวน</option>
-                            <option value="อำเภอสำโรงทาบ">12. อำเภอสำโรงทาบ</option>
-                            <option value="อำเภอบัวเชด">13. อำเภอบัวเชด</option>
-                            <option value="อำเภอพนมดงรัก">14. อำเภอพนมดงรัก</option>
-                            <option value="อำเภอศรีณรงค์">15. อำเภอศรีณรงค์</option>
-                            <option value="อำเภอเขวาสินรินทร์">16. อำเภอเขวาสินรินทร์</option>
-                            <option value="อำเภอโนนนารายณ์">17. อำเภอโนนนารายณ์</option>
-                        </select>
-                    </div>
+<script>
+// ╔══════════════════════════════════════════════════╗
+// ║  🔒 ANTI-INSPECT PROTECTION                     ║
+// ║  ป้องกันการดู Source Code สำหรับผู้ใช้ทั่วไป     ║
+// ╚══════════════════════════════════════════════════╝
 
-                    <div class="form-group">
-                        <label>ตำบล <span class="required">*</span></label>
-                        <!-- Dropdown สำหรับอำเภอสังขะ -->
-                        <select id="subdistrict-select" name="subdistrict" class="hidden" required disabled>
-                            <option value="">-- เลือกตำบล --</option>
-                            <option value="สังขะ">1. สังขะ</option>
-                            <option value="ขอนแตก">2. ขอนแตก</option>
-                            <option value="ดม">3. ดม</option>
-                            <option value="พระแก้ว">4. พระแก้ว</option>
-                            <option value="บ้านจารย์">5. บ้านจารย์</option>
-                            <option value="กระเทียม">6. กระเทียม</option>
-                            <option value="สะกาด">7. สะกาด</option>
-                            <option value="ตาตุม">8. ตาตุม</option>
-                            <option value="ทับทัน">9. ทับทัน</option>
-                            <option value="ตาคง">10. ตาคง</option>
-                            <option value="บ้านชบ">11. บ้านชบ</option>
-                            <option value="เทพรักษา">12. เทพรักษา</option>
-                        </select>
-                        <!-- Input สำหรับอำเภออื่น -->
-                        <input type="text" id="subdistrict-input" name="subdistrict" placeholder="ระบุชื่อตำบล" required disabled>
-                    </div>
+// 1) ปิดคลิกขวา
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
-                    <div class="form-group">
-                        <label>หมู่ที่ <span class="required">*</span></label>
-                        <input type="text" id="village" name="village" required placeholder="ระบุหมู่ที่">
-                    </div>
+// 2) ปิด keyboard shortcuts (F12, Ctrl+Shift+I/J/C, Ctrl+U)
+document.addEventListener('keydown', function(e){
+  if(e.key==='F12') { e.preventDefault(); return false; }
+  if(e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); return false; }
+  if(e.ctrlKey && ['u','U','s','S'].includes(e.key)) { e.preventDefault(); return false; }
+  if(e.metaKey && e.altKey && ['i','I','j','J','c','C'].includes(e.key)) { e.preventDefault(); return false; }
+  if(e.metaKey && ['u','U','s','S'].includes(e.key)) { e.preventDefault(); return false; }
+});
 
-                    <div class="form-group">
-                        <label>เขตเลือกตั้ง <span class="required">*</span></label>
-                        <select id="constituency" name="constituency" required>
-                            <option value="">-- เลือกเขตเลือกตั้ง --</option>
-                            <option value="6">เขต 6</option>
-                            <option value="8">เขต 8</option>
-                        </select>
-                    </div>
-                </div>
+// 3) ตรวจจับ DevTools เปิดอยู่ (ใช้หลายวิธีรวมกัน)
+(function(){
+  var devOpen = false;
+  // Method A: window size diff
+  function checkA(){
+    var w = window.outerWidth - window.innerWidth > 160;
+    var h = window.outerHeight - window.innerHeight > 160;
+    return w || h;
+  }
+  // Method B: debugger timing
+  function checkB(){
+    var s = performance.now();
+    debugger;
+    return performance.now() - s > 100;
+  }
+  // Method C: console.log object trick
+  var element = new Image();
+  Object.defineProperty(element,'id',{get:function(){ devOpen=true; }});
 
-                <!-- ส่วนที่ 2: ความนิยมพรรคการเมือง -->
-                <div class="section">
-                    <h2 class="section-title">
-                        <span class="section-number">2</span>
-                        ความนิยมพรรคการเมือง
-                    </h2>
-                    
-                    <label>ท่านมีความนิยมพรรคการเมืองใด? <span class="required">*</span></label>
-                    <div class="radio-group">
-                        <div class="radio-item">
-                            <input type="radio" id="party1" name="party" value="พรรคเพื่อไทย" required>
-                            <label for="party1">พรรคเพื่อไทย</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party2" name="party" value="พรรคประชาชน" required>
-                            <label for="party2">พรรคประชาชน</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party3" name="party" value="พรรคภูมิใจไทย" required>
-                            <label for="party3">พรรคภูมิใจไทย</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party4" name="party" value="พรรคประชาธิปัตย์" required>
-                            <label for="party4">พรรคประชาธิปัตย์</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party5" name="party" value="พรรคพลังประชารัฐ" required>
-                            <label for="party5">พรรคพลังประชารัฐ</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party6" name="party" value="พรรคเศรษฐกิจใหม่" required>
-                            <label for="party6">พรรคเศรษฐกิจใหม่</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party7" name="party" value="พรรคชาติไทยพัฒนา" required>
-                            <label for="party7">พรรคชาติไทยพัฒนา</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party8" name="party" value="พรรคอื่นๆ" required>
-                            <label for="party8">พรรคอื่นๆ</label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="party9" name="party" value="ยังไม่ตัดสินใจ" required>
-                            <label for="party9">ยังไม่ตัดสินใจ</label>
-                        </div>
-                    </div>
-                </div>
+  setInterval(function(){
+    devOpen = false;
+    console.log('%c', element);
+    if(devOpen || checkA()){
+      document.getElementById('blockWarn').classList.add('show');
+    } else {
+      document.getElementById('blockWarn').classList.remove('show');
+    }
+  }, 1500);
+})();
 
-                <!-- ส่วนที่ 3: ความนิยมผู้สมัคร ส.ส. เขต 6 -->
-                <div class="section hidden" id="section-district-6">
-                    <h2 class="section-title">
-                        <span class="section-number">3</span>
-                        ความนิยมผู้สมัคร ส.ส. เขต 6
-                    </h2>
-                    
-                    <label>ท่านมีความนิยมผู้สมัคร ส.ส. คนใด? <span class="required">*</span></label>
-                    <div class="radio-group">
-                        <div class="radio-item">
-                            <input type="radio" id="c6_1" name="candidate" value="น.ส. ทักษิณา ทับครบุรี - พรรคกล้าธรรม">
-                            <label for="c6_1">
-                                <span class="candidate-number">1</span>
-                                <span class="candidate-name">น.ส. ทักษิณา ทับครบุรี</span>
-                                <span class="candidate-party">(พรรคกล้าธรรม)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_2" name="candidate" value="นาย สมบัติ ศรีสุรินทร์ - พรรคเพื่อไทย">
-                            <label for="c6_2">
-                                <span class="candidate-number">2</span>
-                                <span class="candidate-name">นาย สมบัติ ศรีสุรินทร์</span>
-                                <span class="candidate-party">(พรรคเพื่อไทย)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_3" name="candidate" value="นาย จันทร์ สมัญญา - พรรคเศรษฐกิจ">
-                            <label for="c6_3">
-                                <span class="candidate-number">3</span>
-                                <span class="candidate-name">นาย จันทร์ สมัญญา</span>
-                                <span class="candidate-party">(พรรคเศรษฐกิจ)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_4" name="candidate" value="นาย ล้ำเลิศ พัวพัฒนโชติ - พรรคภูมิใจไทย">
-                            <label for="c6_4">
-                                <span class="candidate-number">4</span>
-                                <span class="candidate-name">นาย ล้ำเลิศ พัวพัฒนโชติ</span>
-                                <span class="candidate-party">(พรรคภูมิใจไทย)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_5" name="candidate" value="นาย ธนกร นานวน - พรรคประชาชน">
-                            <label for="c6_5">
-                                <span class="candidate-number">5</span>
-                                <span class="candidate-name">นาย ธนกร นานวน</span>
-                                <span class="candidate-party">(พรรคประชาชน)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_6" name="candidate" value="นาย พัฑฒิณัฐ สุตวณิชย์ - พรรคประชาธิปัตย์">
-                            <label for="c6_6">
-                                <span class="candidate-number">6</span>
-                                <span class="candidate-name">นาย พัฑฒิณัฐ สุตวณิชย์</span>
-                                <span class="candidate-party">(พรรคประชาธิปัตย์)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_7" name="candidate" value="นาย พัสกร สิงห์ทอง - พรรครวมไทยสร้างชาติ">
-                            <label for="c6_7">
-                                <span class="candidate-number">7</span>
-                                <span class="candidate-name">นาย พัสกร สิงห์ทอง</span>
-                                <span class="candidate-party">(พรรครวมไทยสร้างชาติ)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_8" name="candidate" value="นาย มานพ พุ่มทอง - พรรคไทยทรัพย์ทวี">
-                            <label for="c6_8">
-                                <span class="candidate-number">8</span>
-                                <span class="candidate-name">นาย มานพ พุ่มทอง</span>
-                                <span class="candidate-party">(พรรคไทยทรัพย์ทวี)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_9" name="candidate" value="นาย ธนกร ศรีโกตะเพ็ชร - พรรคปวงชนไทย">
-                            <label for="c6_9">
-                                <span class="candidate-number">9</span>
-                                <span class="candidate-name">นาย ธนกร ศรีโกตะเพ็ชร</span>
-                                <span class="candidate-party">(พรรคปวงชนไทย)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c6_undecided" name="candidate" value="ยังไม่ตัดสินใจ">
-                            <label for="c6_undecided">
-                                <span class="candidate-name">ยังไม่ตัดสินใจ</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+// 4) ปิด drag (ป้องกันลากรูป/ลิงก์ไปเปิดที่อื่น)
+document.addEventListener('dragstart', function(e){ e.preventDefault(); });
 
-                <!-- ส่วนที่ 3: ความนิยมผู้สมัคร ส.ส. เขต 8 -->
-                <div class="section hidden" id="section-district-8">
-                    <h2 class="section-title">
-                        <span class="section-number">3</span>
-                        ความนิยมผู้สมัคร ส.ส. เขต 8
-                    </h2>
-                    
-                    <label>ท่านมีความนิยมผู้สมัคร ส.ส. คนใด? <span class="required">*</span></label>
-                    <div class="radio-group">
-                        <div class="radio-item">
-                            <input type="radio" id="c8_1" name="candidate" value="นาย อำนวย แท่นดี - พรรคกล้าธรรม">
-                            <label for="c8_1">
-                                <span class="candidate-number">1</span>
-                                <span class="candidate-name">นาย อำนวย แท่นดี</span>
-                                <span class="candidate-party">(พรรคกล้าธรรม)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_2" name="candidate" value="นาง ปทิดา ตันติรัตนานนท์ - พรรคภูมิใจไทย">
-                            <label for="c8_2">
-                                <span class="candidate-number">2</span>
-                                <span class="candidate-name">นาง ปทิดา ตันติรัตนานนท์</span>
-                                <span class="candidate-party">(พรรคภูมิใจไทย)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_3" name="candidate" value="น.ส. ปลายฟ้า ปานทอง - พรรคเศรษฐกิจ">
-                            <label for="c8_3">
-                                <span class="candidate-number">3</span>
-                                <span class="candidate-name">น.ส. ปลายฟ้า ปานทอง</span>
-                                <span class="candidate-party">(พรรคเศรษฐกิจ)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_4" name="candidate" value="นาย จรูญ จุดาบุตร - พรรคเพื่อไทย">
-                            <label for="c8_4">
-                                <span class="candidate-number">4</span>
-                                <span class="candidate-name">นาย จรูญ จุดาบุตร</span>
-                                <span class="candidate-party">(พรรคเพื่อไทย)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_5" name="candidate" value="นาย กิตตินันท์ วังอมรมิตร - พรรคประชาชน">
-                            <label for="c8_5">
-                                <span class="candidate-number">5</span>
-                                <span class="candidate-name">นาย กิตตินันท์ วังอมรมิตร</span>
-                                <span class="candidate-party">(พรรคประชาชน)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_6" name="candidate" value="นาย บัณฑิต ศิลาอ่อน - พรรครวมไทยสร้างชาติ">
-                            <label for="c8_6">
-                                <span class="candidate-number">6</span>
-                                <span class="candidate-name">นาย บัณฑิต ศิลาอ่อน</span>
-                                <span class="candidate-party">(พรรครวมไทยสร้างชาติ)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_7" name="candidate" value="นาย ไพบูลย์ ศิริมา - พรรคประชาธิปัตย์">
-                            <label for="c8_7">
-                                <span class="candidate-number">7</span>
-                                <span class="candidate-name">นาย ไพบูลย์ ศิริมา</span>
-                                <span class="candidate-party">(พรรคประชาธิปัตย์)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_8" name="candidate" value="นาย สมรส มั่นยืน - พรรคปวงชนไทย">
-                            <label for="c8_8">
-                                <span class="candidate-number">8</span>
-                                <span class="candidate-name">นาย สมรส มั่นยืน</span>
-                                <span class="candidate-party">(พรรคปวงชนไทย)</span>
-                            </label>
-                        </div>
-                        <div class="radio-item">
-                            <input type="radio" id="c8_undecided" name="candidate" value="ยังไม่ตัดสินใจ">
-                            <label for="c8_undecided">
-                                <span class="candidate-name">ยังไม่ตัดสินใจ</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- ปุ่มส่งข้อมูล -->
-                <div class="submit-section">
-                    <button type="submit" class="submit-btn" id="submitBtn">
-                        ส่งข้อมูลแบบสำรวจ
-                    </button>
-                </div>
-            </form>
-        </div>
+// ╔══════════════════════════════════════════════════╗
+// ║  🔑 PASSWORD HASH (SHA-256)                     ║
+// ║  รหัสเริ่มต้น: admin1234                          ║
+// ║  วิธีเปลี่ยน: ไปที่ sha256.online แล้ว hash       ║
+// ║  รหัสใหม่ แล้วนำมาวางแทน ADMIN_HASH ข้างล่าง    ║
+// ╚══════════════════════════════════════════════════╝
+var ADMIN_HASH = "ac9689e2272427085e35b9d3e3e8bed88cb3434828b43b86fc0596cad4c6e270";
 
-        <div class="footer">
-            <p>© 2025 แบบสำรวจความคิดเห็นประชาชน | ข้อมูลของท่านจะถูกเก็บเป็นความลับ</p>
-        </div>
-    </div>
+async function sha256(text){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
 
-    <script>
-        // แสดง/ซ่อน input ตำบลตามอำเภอที่เลือก
-        document.getElementById('district').addEventListener('change', function() {
-            const selectSubdistrict = document.getElementById('subdistrict-select');
-            const inputSubdistrict = document.getElementById('subdistrict-input');
-            
-            if (this.value === 'อำเภอสังขะ') {
-                // แสดง dropdown ตำบล สำหรับอำเภอสังขะ
-                selectSubdistrict.classList.remove('hidden');
-                selectSubdistrict.removeAttribute('disabled');
-                selectSubdistrict.setAttribute('required', 'required');
-                selectSubdistrict.value = '';
-                
-                // ซ่อน input ตำบล
-                inputSubdistrict.classList.add('hidden');
-                inputSubdistrict.setAttribute('disabled', 'disabled');
-                inputSubdistrict.removeAttribute('required');
-                inputSubdistrict.value = '';
-            } else if (this.value !== '') {
-                // แสดง input ตำบล สำหรับอำเภออื่น
-                inputSubdistrict.classList.remove('hidden');
-                inputSubdistrict.removeAttribute('disabled');
-                inputSubdistrict.setAttribute('required', 'required');
-                inputSubdistrict.value = '';
-                
-                // ซ่อน dropdown ตำบล
-                selectSubdistrict.classList.add('hidden');
-                selectSubdistrict.setAttribute('disabled', 'disabled');
-                selectSubdistrict.removeAttribute('required');
-                selectSubdistrict.value = '';
-            } else {
-                // ถ้ายังไม่เลือกอำเภอ ซ่อนทั้งสอง
-                selectSubdistrict.classList.add('hidden');
-                selectSubdistrict.setAttribute('disabled', 'disabled');
-                selectSubdistrict.removeAttribute('required');
-                selectSubdistrict.value = '';
-                
-                inputSubdistrict.classList.add('hidden');
-                inputSubdistrict.setAttribute('disabled', 'disabled');
-                inputSubdistrict.removeAttribute('required');
-                inputSubdistrict.value = '';
-            }
+
+// ╔══════════════════════════════════════════════════╗
+// ║  📦 DATA & STATE                                ║
+// ╚══════════════════════════════════════════════════╝
+var STORAGE_KEY = "lh_d";
+var DEFAULT_DATA = {
+  categories: [
+    { id:"w", name:"\u{1F3E2} งาน", color:"#3B82F6", links:[
+      { id:"1", title:"Google Drive", url:"https://drive.google.com", desc:"ไฟล์และเอกสาร" },
+      { id:"2", title:"Gmail", url:"https://mail.google.com", desc:"อีเมล" },
+      { id:"3", title:"Google Calendar", url:"https://calendar.google.com", desc:"ตารางนัดหมาย" }
+    ]},
+    { id:"s", name:"\u{1F4AC} โซเชียล", color:"#8B5CF6", links:[
+      { id:"4", title:"Facebook", url:"https://facebook.com", desc:"เฟซบุ๊ก" },
+      { id:"5", title:"LINE", url:"https://line.me", desc:"แชท" },
+      { id:"6", title:"Instagram", url:"https://instagram.com", desc:"รูปภาพ" }
+    ]},
+    { id:"t", name:"\u{1F6E0}\u{FE0F} เครื่องมือ", color:"#10B981", links:[
+      { id:"7", title:"ChatGPT", url:"https://chat.openai.com", desc:"AI ช่วยงาน" },
+      { id:"8", title:"Canva", url:"https://canva.com", desc:"ออกแบบกราฟิก" },
+      { id:"9", title:"Notion", url:"https://notion.so", desc:"จัดการโน้ต" }
+    ]}
+  ]
+};
+
+var data, searchTerm="", activeCat="all", adminTab="links", isAuth=false;
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function ld(){ try{ var d=localStorage.getItem(STORAGE_KEY); return d?JSON.parse(d):JSON.parse(JSON.stringify(DEFAULT_DATA)); }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_DATA)); } }
+function sd(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function fav(u){ try{ return "https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"; }catch(e){ return null; } }
+function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+data = ld();
+
+function getG(){
+  var h=new Date().getHours();
+  if(h<6) return "\u{1F319} สวัสดีดึก";
+  if(h<12) return "\u{2600}\u{FE0F} สวัสดีตอนเช้า";
+  if(h<17) return "\u{1F324}\u{FE0F} สวัสดีตอนบ่าย";
+  return "\u{1F306} สวัสดีตอนเย็น";
+}
+function getT(){ return new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"}); }
+function getD(){ return new Date().toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); }
+
+
+// ╔══════════════════════════════════════════════════╗
+// ║  🖥️ RENDER                                      ║
+// ╚══════════════════════════════════════════════════╝
+function render(){
+  var tl=data.categories.reduce(function(s,c){return s+c.links.length},0);
+  var filtered=data.categories
+    .filter(function(c){return activeCat==="all"||c.id===activeCat})
+    .map(function(c){return{id:c.id,name:c.name,color:c.color,links:c.links.filter(function(l){
+      if(!searchTerm)return true;var q=searchTerm.toLowerCase();
+      return l.title.toLowerCase().indexOf(q)!==-1||(l.desc||"").toLowerCase().indexOf(q)!==-1||l.url.toLowerCase().indexOf(q)!==-1;
+    })}})
+    .filter(function(c){return c.links.length>0||!searchTerm});
+
+  var h='<header class="header"><div class="clock" id="clock">'+getT()+'</div><div class="date" id="dateStr">'+getD()+'</div><h1 class="greeting">'+getG()+'</h1><p class="subtitle">คุณมี '+tl+' ลิงก์ ใน '+data.categories.length+' หมวด</p></header>';
+  h+='<div class="search-wrap"><span class="search-icon">\u{1F50D}</span><input class="search-input" id="searchInput" placeholder="ค้นหาลิงก์..." value="'+esc(searchTerm)+'"><button class="search-clear '+(searchTerm?'show':'')+'" id="searchClear">\u2715</button></div>';
+  h+='<div class="cat-filter"><button class="cat-pill '+(activeCat==='all'?'active':'')+'" data-cat="all">ทั้งหมด</button>';
+  data.categories.forEach(function(c){
+    var s=activeCat===c.id?'style="background:'+c.color+'22;border-color:'+c.color+';color:'+c.color+'"':'';
+    h+='<button class="cat-pill '+(activeCat===c.id?'active':'')+'" data-cat="'+c.id+'" '+s+'>'+esc(c.name)+'</button>';
+  });
+  h+='</div>';
+
+  if(filtered.length===0&&searchTerm){
+    h+='<div class="no-result"><div class="no-result-icon">\u{1F50D}</div>ไม่พบลิงก์ที่ตรงกับ "'+esc(searchTerm)+'"</div>';
+  } else {
+    filtered.forEach(function(cat){
+      h+='<section class="section"><div class="section-header"><div class="section-dot" style="background:'+cat.color+'"></div><h2 class="section-title">'+esc(cat.name)+'</h2><div class="section-line" style="background:linear-gradient(90deg,'+cat.color+'44,transparent)"></div></div>';
+      if(cat.links.length===0){h+='<div class="empty-section">ยังไม่มีลิงก์ในหมวดนี้</div>';}
+      else{
+        h+='<div class="grid">';
+        cat.links.forEach(function(link){
+          var f=fav(link.url);
+          h+='<a class="card" href="'+esc(link.url)+'" target="_blank" rel="noopener noreferrer"><div class="card-inner"><div class="card-icon" style="background:'+cat.color+'18">';
+          if(f){h+='<img src="'+f+'" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span style="display:none;font-size:22px">\u{1F517}</span>';}
+          else{h+='<span style="font-size:22px">\u{1F517}</span>';}
+          h+='</div><div class="card-text"><div class="card-title">'+esc(link.title)+'</div>';
+          if(link.desc)h+='<div class="card-desc">'+esc(link.desc)+'</div>';
+          h+='</div><div class="card-arrow">\u2192</div></div></a>';
         });
+        h+='</div>';
+      }
+      h+='</section>';
+    });
+  }
 
-        // แสดง/ซ่อนส่วนผู้สมัคร ส.ส. ตามเขตที่เลือก
-        document.getElementById('constituency').addEventListener('change', function() {
-            const district6 = document.getElementById('section-district-6');
-            const district8 = document.getElementById('section-district-8');
-            
-            // ล้างค่าเดิมทั้งหมด
-            document.querySelectorAll('input[name="candidate"]').forEach(radio => {
-                radio.checked = false;
-                radio.removeAttribute('required');
-            });
+  document.getElementById('app').innerHTML=h;
+  var si=document.getElementById('searchInput');
+  if(si){si.addEventListener('input',function(e){searchTerm=e.target.value;render();});si.focus();si.setSelectionRange(si.value.length,si.value.length);}
+  document.getElementById('searchClear')&&document.getElementById('searchClear').addEventListener('click',function(){searchTerm='';render();});
+  document.querySelectorAll('.cat-pill').forEach(function(b){b.addEventListener('click',function(){activeCat=b.dataset.cat;render();});});
+}
 
-            // แสดงส่วนที่ถูกต้อง
-            if (this.value === '6') {
-                district6.classList.remove('hidden');
-                district8.classList.add('hidden');
-                // เพิ่ม required สำหรับเขต 6
-                document.querySelectorAll('#section-district-6 input[name="candidate"]').forEach(radio => {
-                    radio.setAttribute('required', 'required');
-                });
-            } else if (this.value === '8') {
-                district8.classList.remove('hidden');
-                district6.classList.add('hidden');
-                // เพิ่ม required สำหรับเขต 8
-                document.querySelectorAll('#section-district-8 input[name="candidate"]').forEach(radio => {
-                    radio.setAttribute('required', 'required');
-                });
-            } else {
-                district6.classList.add('hidden');
-                district8.classList.add('hidden');
-            }
-        });
 
-        // จัดการส่งฟอร์ม
-        document.getElementById('surveyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const messageDiv = document.getElementById('message');
-            
-            // รับค่าตำบลจาก input ที่ active
-            const subdistrictSelect = document.getElementById('subdistrict-select');
-            const subdistrictInput = document.getElementById('subdistrict-input');
-            const subdistrictValue = subdistrictSelect.disabled ? subdistrictInput.value : subdistrictSelect.value;
-            
-            // รวบรวมข้อมูล
-            const formData = {
-                timestamp: new Date().toLocaleString('th-TH'),
-                district: document.getElementById('district').value,
-                subdistrict: subdistrictValue,
-                village: document.getElementById('village').value,
-                constituency: document.getElementById('constituency').value,
-                party: document.querySelector('input[name="party"]:checked').value,
-                candidate: document.querySelector('input[name="candidate"]:checked').value
-            };
+// ╔══════════════════════════════════════════════════╗
+// ║  🔧 ADMIN                                       ║
+// ╚══════════════════════════════════════════════════╝
+function openAdmin(){ if(!isAuth){renderLogin();}else{renderAP();} document.getElementById('overlay').classList.add('open'); }
+function closeAdmin(){ document.getElementById('overlay').classList.remove('open'); }
 
-            // ปิดการใช้งานปุ่มชั่วคราว
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'กำลังส่งข้อมูล...';
+function renderLogin(){
+  document.getElementById('modal').innerHTML='<div class="modal-header"><h2 class="modal-title">\u{1F510} เข้าสู่ระบบแอดมิน</h2><button class="close-btn" id="closeModal">\u2715</button></div><div class="login-box"><div class="login-title">\u{1F512}</div><div class="login-subtitle">กรอกรหัสผ่านเพื่อจัดการลิงก์</div><input class="input" type="password" id="pwInput" placeholder="รหัสผ่าน" autocomplete="off"><button class="add-btn" id="loginBtn" style="max-width:300px;margin:0 auto">เข้าสู่ระบบ</button><div class="login-error" id="loginErr"></div></div>';
+  document.getElementById('closeModal').addEventListener('click',closeAdmin);
+  var pw=document.getElementById('pwInput');
+  document.getElementById('loginBtn').addEventListener('click',async function(){
+    var h=await sha256(pw.value);
+    if(h===ADMIN_HASH){isAuth=true;renderAP();}
+    else{document.getElementById('loginErr').textContent="\u274C รหัสผ่านไม่ถูกต้อง";}
+  });
+  pw.addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('loginBtn').click();});
+  pw.focus();
+}
 
-            // ส่งข้อมูลไปยัง Google Apps Script
-            const scriptURL = 'https://script.google.com/macros/s/AKfycby11qHZZO_Rtd1MCmdPlP_lZ7zYrhE7R_TUx26b4PkbOZKosWH5OEBa0-w60MPSKQKH/exec';
+function flash(m){var el=document.getElementById('adminFlash');if(el){el.textContent=m;el.style.display='block';setTimeout(function(){el.style.display='none'},2000);}}
 
-            // ใช้ fetch แบบ no-cors สำหรับ Google Apps Script
-            fetch(scriptURL, {
-                redirect: "follow",
-                method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                }
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                console.log('Response ok:', response.ok);
-                return response.text(); // เปลี่ยนเป็น text() ก่อน
-            })
-            .then(text => {
-                console.log('Response text:', text);
-                try {
-                    const data = JSON.parse(text);
-                    if (data.status === 'success') {
-                        messageDiv.className = 'message success';
-                        messageDiv.textContent = '✅ ส่งข้อมูลสำเร็จ ขอบคุณสำหรับการตอบแบบสำรวจ';
-                        messageDiv.style.display = 'block';
-                        
-                        // รีเซ็ตฟอร์ม
-                        document.getElementById('surveyForm').reset();
-                        document.getElementById('section-district-6').classList.add('hidden');
-                        document.getElementById('section-district-8').classList.add('hidden');
-                        document.getElementById('subdistrict-select').classList.add('hidden');
-                        document.getElementById('subdistrict-input').classList.add('hidden');
-                        
-                        // เลื่อนขึ้นด้านบน
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        throw new Error(data.message || 'เกิดข้อผิดพลาด');
-                    }
-                } catch (parseError) {
-                    // ถ้า parse ไม่ได้ แต่ส่งสำเร็จ (status 200)
-                    console.error('Parse error:', parseError);
-                    console.log('Raw response:', text);
-                    
-                    // ถ้าได้ response กลับมา แสดงว่าส่งสำเร็จแล้ว
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = '✅ ส่งข้อมูลสำเร็จ ขอบคุณสำหรับการตอบแบบสำรวจ';
-                    messageDiv.style.display = 'block';
-                    
-                    // รีเซ็ตฟอร์ม
-                    document.getElementById('surveyForm').reset();
-                    document.getElementById('section-district-6').classList.add('hidden');
-                    document.getElementById('section-district-8').classList.add('hidden');
-                    document.getElementById('subdistrict-select').classList.add('hidden');
-                    document.getElementById('subdistrict-input').classList.add('hidden');
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ เกิดข้อผิดพลาด: ' + error.message;
-                messageDiv.style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'ส่งข้อมูลแบบสำรวจ';
-                
-                // ซ่อนข้อความหลัง 5 วินาที
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 5000);
-            });
-        });
+function renderAP(){
+  var m=document.getElementById('modal');
+  var h='<div class="modal-header"><h2 class="modal-title">\u{1F527} จัดการลิงก์</h2><button class="close-btn" id="closeModal">\u2715</button></div><div class="flash" id="adminFlash" style="display:none"></div><div class="tabs"><button class="tab '+(adminTab==='links'?'active':'')+'" data-tab="links">จัดการลิงก์</button><button class="tab '+(adminTab==='cats'?'active':'')+'" data-tab="cats">จัดการหมวด</button></div>';
 
-        // ป้องกันการส่งฟอร์มซ้ำ
-        let isSubmitting = false;
-        document.getElementById('surveyForm').addEventListener('submit', function(e) {
-            if (isSubmitting) {
-                e.preventDefault();
-                return false;
-            }
-            isSubmitting = true;
-            setTimeout(() => { isSubmitting = false; }, 3000);
-        });
-    </script>
+  if(adminTab==='links'){
+    h+='<div class="form-section"><div class="form-label">เพิ่มลิงก์ใหม่</div><select class="input" id="aC"><option value="">\u2014 เลือกหมวด \u2014</option>';
+    data.categories.forEach(function(c){h+='<option value="'+c.id+'">'+esc(c.name)+'</option>';});
+    h+='</select><input class="input" id="aT" placeholder="ชื่อลิงก์"><input class="input" id="aU" placeholder="URL (เช่น google.com)"><input class="input" id="aD" placeholder="คำอธิบาย (ไม่บังคับ)"><button class="add-btn" id="aLB">\uFF0B เพิ่มลิงก์</button></div>';
+    h+='<div class="form-section"><div class="form-label">ลิงก์ทั้งหมด</div>';
+    data.categories.forEach(function(cat){
+      h+='<div style="margin-bottom:16px"><div class="cat-label-admin" style="border-left-color:'+cat.color+'">'+esc(cat.name)+'</div>';
+      if(cat.links.length===0){h+='<div class="empty-text">ยังไม่มีลิงก์</div>';}
+      else{cat.links.forEach(function(l){
+        h+='<div class="admin-row"><div style="flex:1;min-width:0"><div class="admin-link-title">'+esc(l.title)+'</div><div class="admin-link-url">'+esc(l.url)+'</div></div><button class="del-btn" data-dc="'+cat.id+'" data-dl="'+l.id+'">ลบ</button></div>';
+      });}
+      h+='</div>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="form-section"><div class="form-label">เพิ่มหมวดใหม่</div><input class="input" id="aCN" placeholder="ชื่อหมวด (เช่น \u{1F4DA} การเรียน)"><div class="color-pick"><label>สี:</label><input type="color" id="aCC" value="#3B82F6"></div><button class="add-btn" id="aCB">\uFF0B เพิ่มหมวด</button></div>';
+    h+='<div class="form-section"><div class="form-label">หมวดทั้งหมด</div>';
+    data.categories.forEach(function(cat){
+      h+='<div class="admin-row"><div style="display:flex;align-items:center;gap:10px;flex:1"><div style="width:16px;height:16px;border-radius:4px;background:'+cat.color+';flex-shrink:0"></div><span style="color:#E2E8F0">'+esc(cat.name)+'</span><span style="color:#64748B;font-size:13px">('+cat.links.length+' ลิงก์)</span></div><button class="del-btn" data-dco="'+cat.id+'">ลบ</button></div>';
+    });
+    h+='</div>';
+  }
+
+  m.innerHTML=h;
+
+  document.getElementById('closeModal').addEventListener('click',closeAdmin);
+  document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){adminTab=t.dataset.tab;renderAP();});});
+
+  var alb=document.getElementById('aLB');
+  if(alb) alb.addEventListener('click',function(){
+    var cid=document.getElementById('aC').value,ti=document.getElementById('aT').value.trim(),ur=document.getElementById('aU').value.trim(),de=document.getElementById('aD').value.trim();
+    if(!cid||!ti||!ur){flash("\u26A0\uFE0F กรุณากรอกข้อมูลให้ครบ");return;}
+    if(!/^https?:\/\//.test(ur))ur="https://"+ur;
+    var c=data.categories.find(function(x){return x.id===cid});
+    if(c){c.links.push({id:uid(),title:ti,url:ur,desc:de});sd();render();renderAP();flash("\u2705 เพิ่มลิงก์แล้ว");}
+  });
+
+  document.querySelectorAll('[data-dl]').forEach(function(b){b.addEventListener('click',function(){
+    var c=data.categories.find(function(x){return x.id===b.dataset.dc});
+    if(c){c.links=c.links.filter(function(l){return l.id!==b.dataset.dl});sd();render();renderAP();flash("\u{1F5D1}\uFE0F ลบลิงก์แล้ว");}
+  });});
+
+  var acb=document.getElementById('aCB');
+  if(acb) acb.addEventListener('click',function(){
+    var n=document.getElementById('aCN').value.trim(),co=document.getElementById('aCC').value;
+    if(!n){flash("\u26A0\uFE0F กรุณาใส่ชื่อหมวด");return;}
+    data.categories.push({id:uid(),name:n,color:co,links:[]});sd();render();renderAP();flash("\u2705 เพิ่มหมวดแล้ว");
+  });
+
+  document.querySelectorAll('[data-dco]').forEach(function(b){b.addEventListener('click',function(){
+    if(!confirm("ลบหมวดนี้และลิงก์ทั้งหมดในหมวด?"))return;
+    data.categories=data.categories.filter(function(c){return c.id!==b.dataset.dco});sd();render();renderAP();flash("\u{1F5D1}\uFE0F ลบหมวดแล้ว");
+  });});
+}
+
+document.getElementById('fabBtn').addEventListener('click',openAdmin);
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===e.currentTarget)closeAdmin();});
+setInterval(function(){var c=document.getElementById('clock'),d=document.getElementById('dateStr');if(c)c.textContent=getT();if(d)d.textContent=getD();},30000);
+
+render();
+</script>
 </body>
 </html>
